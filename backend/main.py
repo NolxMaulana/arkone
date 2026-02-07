@@ -76,9 +76,24 @@ class KGenEngageBot:
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
         }
 
+    def _get_headers(self, cid=None):
+        h = self.headers.copy()
+        if cid == "2270e7db-9fc2-457f-9267-515462d2e023":
+            h.update({
+                "Accept": "application/json",
+                "sec-ch-ua": '"Chromium";v="140", "Not=A?Brand";v="24", "Google Chrome";v="140"',
+                "sec-ch-ua-mobile": "?0",
+                "sec-ch-ua-platform": '"Windows"',
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-site"
+            })
+        return h
+
     async def _fetch_active_campaigns(self):
+        h = self._get_headers()
         try:
-            r = await self.client.get(self.LIST_URL, headers=self.headers, timeout=10)
+            r = await self.client.get(self.LIST_URL, headers=h, timeout=10)
             if r.status_code == 200:
                 c = r.json().get("campaigns", [])
                 return [x for x in c if x.get("campaignStatus") in ["LIVE", "STARTED"]]
@@ -87,27 +102,30 @@ class KGenEngageBot:
 
     async def _start_campaign(self, user_id, cid):
         url = f"{self.CAMPAIGN_BASE_URL}/{user_id}/campaigns/{cid}/start"
+        h = self._get_headers(cid)
         try:
-            r = await self.client.post(url, headers=self.headers, json={}, timeout=10)
+            r = await self.client.post(url, headers=h, json={}, timeout=10)
             return r.status_code == 200
         except: return False
 
     async def _fetch_campaign_tasks(self, user_id, cid):
         url = f"{self.CAMPAIGN_BASE_URL}/{user_id}/campaigns/{cid}"
+        h = self._get_headers(cid)
         try:
-            r = await self.client.get(url, headers=self.headers, timeout=10)
+            r = await self.client.get(url, headers=h, timeout=10)
             return r.json() if r.status_code == 200 else None
         except: return None
 
     async def _validate_task(self, user_id, cid, tid):
         url = f"{self.CAMPAIGN_BASE_URL}/{user_id}/campaigns/{cid}/tasks/{tid}/validate"
+        h = self._get_headers(cid)
         try:
-            r = await self.client.post(url, headers=self.headers, json={}, timeout=10)
+            r = await self.client.post(url, headers=h, json={}, timeout=10)
             return r.status_code == 200
         except: return False
 
     async def _disconnect_social(self, provider):
-        h = self.headers.copy()
+        h = self._get_headers()
         h["source"] = "app"
         try:
             r = await self.client.request("DELETE", self.DISCONNECT_URL, headers=h, json={"provider": provider}, timeout=10)
