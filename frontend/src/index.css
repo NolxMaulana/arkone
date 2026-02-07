@@ -1,0 +1,10 @@
+/* CSS Reset and base styles */
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #050505;
+}
