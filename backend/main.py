@@ -57,6 +57,7 @@ class KGenEngageBot:
         self.CAMPAIGN_IDS = [
             "7585dbbc-0f88-48d8-b22c-7b640a45a79f", # Kickstart Your POGE
             "4221a801-c49c-443c-8106-45d09c89c139", # KDrop Campaign
+            "2270e7db-9fc2-457f-9267-515462d2e023", # New Airdrop Campaign
             "7ed14636-0649-4bac-a00c-ddb5572eb0e0"  # New Campaign
         ]
         self.CAMPAIGN_BASE_URL = "https://prod-api-backend.kgen.io/platform-campaign-hub/s2s/airdrop-campaign/user-progress"
